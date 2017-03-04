@@ -1,0 +1,7 @@
+for f in `cat svn.status.txt`; do
+	if [ "$lastf" = "M" -a -f $f ]; then
+		echo "svn revert $f"
+		svn revert $f
+	fi
+	lastf=$f
+done

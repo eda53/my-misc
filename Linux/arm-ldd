@@ -1,0 +1,4 @@
+#!/bin/sh
+[ -z "$1" ] && echo "file is needed;" && return
+
+arm-linux-gnueabi-readelf -a $1 | grep "Shared library:" | cut -f 2 -d '[' | cut -f 1 -d ']'

@@ -1,0 +1,1 @@
+find . \( -name '*.o' -o -name '*.a' -o -name '*.P' -o -name '.depend' \) -exec rm -rf {} \;

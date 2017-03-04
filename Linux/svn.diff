@@ -1,0 +1,40 @@
+#!/bin/bash
+
+batchmode=0
+hijacked=0
+
+if [ -n "$1" ]; then
+	if [ "$1" == "--batch" ]; then
+		batchmode=1
+	else
+		echo "svn.diff [--batch]"
+		return 0 2>/dev/null || exit 0
+	fi
+fi
+
+if [ $batchmode -eq 1 ]; then
+	if grep -q '^diff-cmd' ~/.subversion/config; then
+		hijacked=1
+		sed -i 's/^diff-cmd/#diff-cmd/' ~/.subversion/config
+	fi
+else
+	if grep -q '^#diff-cmd' ~/.subversion/config; then
+		hijacked=1
+		sed -i 's/^#diff-cmd/diff-cmd/' ~/.subversion/config
+	fi
+fi
+
+for f in `cat svn.status.txt`; do
+	if [ "$lastf" = "M" -a -f $f ]; then
+		svn diff $f
+	fi
+	lastf=$f
+done
+
+if [ $hijacked -eq 1 ]; then
+	if [ $batchmode -eq 1 ]; then
+		sed -i 's/^#diff-cmd/diff-cmd/' ~/.subversion/config
+	else
+		sed -i 's/^diff-cmd/#diff-cmd/' ~/.subversion/config
+	fi
+fi

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+	echo -e "$BASH_SOURCE\t<cmd/script> [args]...\n\t: run the command/script, and save the stdout/stderr into log file."
+	exit 0;
+fi
+
+#LOGFILE="release.`date +"%Y-%m-%d_%H-%M-%S"`.log"
+LOGFILE="logrun.`date +"%Y-%m-%d"`.log"
+
+my_exec_cmd() {
+	echo '==> Executing ['"$@"']...' | tee -a $LOGFILE
+	eval "$@" 2>&1 | tee -a $LOGFILE
+}
+
+my_exec_sh() {
+	echo '==> Running ['"$@"']...' | tee -a $LOGFILE
+	set -x
+	bash -x "$@" 2>&1 | tee -a $LOGFILE
+	set -
+}
+
+if [ -f "$1" ]; then
+	my_exec_sh "$@"
+else
+	my_exec_cmd "$@"
+fi
