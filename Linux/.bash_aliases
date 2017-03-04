@@ -15,6 +15,7 @@ done
 alias gitdiff='git difftool -y'
 alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exlucde "*.git*"  --color=auto'
 alias tar='tar --exclude "*.svn*" --exclude "*.git*"'
+alias rsync='rsync -av --exclude "*.svn*" --exclude "*.o" --exclude "*.P"'
 
 pd () {
 	if [ -z "$1" ]; then
@@ -24,4 +25,21 @@ pd () {
 	fi
 	dirs -v
 }
+
+function svn() {
+case $1 in
+	st | status )
+		shift 1
+		command svn status "$@" | sort -k 2
+		;;
+	patch )
+		shift 1
+		command svn status "$@" | grep -v '?' | sed 's/.* //' | sort | while read A; do command svn diff --diff-cmd diff "$A"; done
+		;;
+	* )
+		command svn "$@"
+		;;
+esac
+}
+
 
