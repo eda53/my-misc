@@ -18,6 +18,8 @@ vimdiff_dir() {
 		fileext=${filename##*.}
 #		[ -f "${from}/${fil}" -a -f "${to}/${fil}" ] && (file "${from}/${fil}" | grep -q "ELF" || vimdiff ${from}/${fil} ${to}/${fil})
 		[ -f "${from}/${fil}" -a ! -h "${from}/${fil}" -a -f "${to}/${fil}" ] && [ "$fileext" != "jpg" -a "$fileext" != "png" -a "$fileext" != "P" ] &&  (file "${from}/${fil}" | grep -q "ELF" || diff -q ${from}/${fil} ${to}/${fil} || vimdiff ${from}/${fil} ${to}/${fil})
+		[ ! -d "${from}/${fil}" -a ! -f "${from}/${fil}" ] && echo "${from}/${fil}   MISSED!"
+		[ ! -d "${to}/${fil}"   -a ! -f "${to}/${fil}" ] && echo "${to}/${fil}   MISSED!"
 	done
 }
 
