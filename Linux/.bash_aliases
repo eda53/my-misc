@@ -13,7 +13,7 @@ for i in `seq 9`; do
 	alias $i="pushd +$i >/dev/null && dirs"
 done
 alias gitdiff='git difftool -y'
-alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exlucde "*.git*"  --color=auto'
+alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exclude "*.git*"  --color=auto'
 alias tar='tar --exclude "*.svn*" --exclude "*.git*"'
 alias rsync='rsync -av --exclude "*.svn*" --exclude "*.o" --exclude "*.P"'
 
