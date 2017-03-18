@@ -5,7 +5,7 @@
 
 todp () {
 	FILENAME="$(date '+%y%m%d%H%M%S%N')"
-	tar -czvf ${FILENAME}.tgz $@ && \
+	tar --exclude '*.svn*' --exclude '*.git*' --exclude '*CVS*' -czvf ${FILENAME}.tgz $@ && \
 	zip -m --password MYPASSWORD ${FILENAME}.zip ${FILENAME}.tgz && \
 	mv ${FILENAME}.zip ~/Dropbox/
 }
