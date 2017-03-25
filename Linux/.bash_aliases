@@ -12,10 +12,10 @@ alias 0='dirs'
 for i in `seq 9`; do
 	alias $i="pushd +$i >/dev/null && dirs"
 done
-alias gitdiff='git difftool -y'
-alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exclude "*.git*"  --color=auto'
-alias tar='tar --exclude "*.svn*" --exclude "*.git*"'
-alias rsync='rsync -av --exclude "*.svn*" --exclude "*.o" --exclude "*.P"'
+alias gitdiff='git difftool -t vimdiff -y'
+alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exclude "*.git*" --exclude "*.o" --exclude "*.P"  --color=auto'
+alias tar='tar --exclude "*.svn*" --exclude "*.git*" --exclude "*.o" --exclude "*.P"'
+alias rsync='rsync -av --exclude "*.svn*" --exclude "*.git*" --exclude "*CVS*" --exclude "*.o" --exclude "*.P"'
 
 pd () {
 	if [ -z "$1" ]; then
