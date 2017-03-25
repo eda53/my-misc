@@ -8,15 +8,30 @@
 
 if [ -f "$1" ]; then
 	fdir=$(dirname $1)
-	if [ -d "$fdir/build" ]; then
+	#if [ -d "$fdir/build" ]; then
+		#bdir="$fdir/build"
+	#elif [ -d "$fdir/../build" ]; then
+		#bdir="$fdir/../build"
+	#else
+		#bdir="$fdir"
+	#fi
+
+	if [ -f "$fdir/Makefile" -o -f "$fdir/makefile" ]; then
+		bdir="$fdir"
+	elif [ -f "$fdir/build/Makefile" -o -f "$fdir/build/makefile" ]; then
 		bdir="$fdir/build"
-	elif [ -d "$fdir/../build" ]; then
+	elif [ -f "$fdir/../build/Makefile" -o -f "$fdir/../build/makefile" ]; then
 		bdir="$fdir/../build"
 	else
-		bdir="$fdir"
+		if [ -d "$fdir/build" ]; then
+			bdir="$fdir/build"
+		elif [ -d "$fdir/../build" ]; then
+			bdir="$fdir/../build"
+		else
+			bdir="$fdir"
+		fi
 	fi
-	make  V=1 -C $bdir
-	make  V=1 -C $bdir
+	make  V=1 -C $bdir debug || make  V=1 -C $bdir
 else
 	make V=1 $*
 fi
