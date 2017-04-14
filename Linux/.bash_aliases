@@ -14,7 +14,7 @@ for i in `seq 9`; do
 done
 alias gitdiff='git difftool -t vimdiff -y'
 alias grep='grep --exclude "*.svn*" --exclude "*CVS*" --exclude "*.git*" --exclude "*.o" --exclude "*.P"  --color=auto'
-alias tar='tar --exclude "*.svn*" --exclude "*.git*" --exclude "*.o" --exclude "*.P"'
+alias tar='tar --exclude "*.svn*" --exclude "*.git*" --exclude "*.o" --exclude "*.P" --exclude "*.ciu" --exclude "*.img"'
 alias rsync='rsync -av --exclude "*.svn*" --exclude "*.git*" --exclude "*CVS*" --exclude "*.o" --exclude "*.P"'
 
 pd () {
@@ -42,4 +42,6 @@ case $1 in
 esac
 }
 
+
+export SVN_MERGE=~/.bin/svn-merge.sh
 
