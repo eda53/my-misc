@@ -9,6 +9,7 @@
 USER='eda'
 PASSWD='eda'
 JENKENS_SERVER='http://embeddedbuilder:8080'
+CURL='curl --user '"${USER}:${PASSWD}"
 
 test () {
 curl "${JENKENS_SERVER}/job/3012UDC-J2K-10G-LITE/2/doDelete" \
@@ -26,7 +27,9 @@ curl "${JENKENS_SERVER}/job/3012UDC-J2K-10G-LITE/2/doDelete" \
 Usage () {
 	echo 'jenkins list   [View]'
 	echo 'jenkins export [View] [Job-Filter]'
-	echo 'jenkins delb   <Job> <build-list>'
+	echo 'jenkins builds <Job>'
+	echo 'jenkins delb   <Job> <build>'
+	echo 'jenkins delb   <Job> <from-build> <to-build>'
 }
 
 list_jobs () {
@@ -36,7 +39,7 @@ list_jobs () {
 		JENKENS_URL="${JENKENS_SERVER}"
 	fi
 
-	HTML_RET=`curl "${JENKENS_URL}" -X POST --user "${USER}:${PASSWD}" 2>/dev/null | sed -n '/<div id="main-panel">/{p; :loop n; p; b loop}'`
+	HTML_RET=`$CURL "${JENKENS_URL}" -X POST 2>/dev/null | sed -n '/<div id="main-panel">/{p; :loop n; p; b loop}'`
 	echo $HTML_RET | grep -oh 'job/[^/]*/' | sort -u
 }
 
@@ -49,13 +52,40 @@ export_cfg () {
 		job=$(echo $job | sed 's/job//' | sed 's/\///g')
 		if [ -z "$2" ] || echo $job | grep -q "$2"; then
 			echo -n "Get $job config      ... "
-			if curl "${JENKENS_SERVER}/job/$job/config.xml" --user "${USER}:${PASSWD}" > ${CUR_TS}/${job}_config.xml 2>/dev/null; then
+			if $CURL "${JENKENS_SERVER}/job/$job/config.xml"  > ${CUR_TS}/${job}_config.xml 2>/dev/null; then
 				echo "Done"
 			else
 				echo "Failed!"
 			fi
 		fi
 	done
+}
+
+list_builds () {
+	job="$1"
+	[ -z "$job" ] && Usage && return
+
+	JENKENS_URL="${JENKENS_SERVER}/job/$job/"
+	HTML_RET=`$CURL "${JENKENS_URL}" 2>/dev/null | grep -oh "/job/$job/[0-9]\+/\">[^/]\+/a>" | sed '0~2d'`
+	echo "$HTML_RET" | sed 's/<\/a>//g' | sed 's/">/\t/g' | sort -u
+}
+
+delete_build () {
+	job="$1"
+	build_from="$2"
+	[ -z "$build_from" ] && Usage && return
+
+	if [ -z "$3" ]; then
+		JENKENS_URL="${JENKENS_SERVER}/job/$job/$build_from/doDelete"
+		echo $JENKENS_URL
+		$CURL ${JENKENS_URL} -X POST 1>/dev/null 2>&1
+	else
+		for b in $(seq $build_from $3); do
+			JENKENS_URL="${JENKENS_SERVER}/job/$job/$b/doDelete"
+			echo $JENKENS_URL
+			$CURL ${JENKENS_URL} -X POST 1>/dev/null 2>&1
+		done
+	fi
 }
 
 cmd="$1"
@@ -69,6 +99,23 @@ case "$cmd" in
 
 	export)
 		export_cfg $@
+		;;
+
+	builds)
+		list_builds $@
+		;;
+
+	delb)
+		delete_build $@
+		;;
+
+	dumpbuilds)
+		for job in $(list_jobs $1); do
+			job=$(echo $job | sed 's/job\///' | sed 's/\///g')
+			echo "==>Dump $job buillds..."
+			list_builds $job
+			echo ""
+		done
 		;;
 
 	*)
