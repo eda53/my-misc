@@ -71,18 +71,13 @@ delete_build () {
 	job="$1"
 	build_from="$2"
 	[ -z "$build_from" ] && Usage && return
+	[ -n "$3" ]  && build_to="$3" || build_to="$build_from"
 
-	if [ -z "$3" ]; then
-		JENKENS_URL="${JENKENS_SERVER}/job/$job/$build_from/doDelete"
+	for b in $(seq $build_from $build_to); do
+		JENKENS_URL="${JENKENS_SERVER}/job/$job/$b/doDelete"
 		echo $JENKENS_URL
 		$CURL ${JENKENS_URL} -X POST 1>/dev/null 2>&1
-	else
-		for b in $(seq $build_from $3); do
-			JENKENS_URL="${JENKENS_SERVER}/job/$job/$b/doDelete"
-			echo $JENKENS_URL
-			$CURL ${JENKENS_URL} -X POST 1>/dev/null 2>&1
-		done
-	fi
+	done
 }
 
 cmd="$1"
