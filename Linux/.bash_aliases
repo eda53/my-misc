@@ -1,7 +1,7 @@
 alias startx='sudo service lightdm start'
 alias ls='ls --color'
 alias l.='ls -d .*'
-alias ll='ls -l --time-style=long-iso'
+alias ll='ls -alF --time-style=long-iso'
 alias cls='clear'
 alias vim='vim -p'
 alias upcs='~/.bin/updatecs.sh'
@@ -22,11 +22,14 @@ pd () {
 	if [ -z "$1" ]; then
 		popd >/dev/null;
 	else
-		if dirs -l | sed '1d' | grep -q " ${PWD}$"; then
-			cd "$1"
-		else
-			pushd "$1" >/dev/null;
-		fi
+		[ ! -d "$1" ] && return -1
+		dirs_i=0
+		for d in $(command dirs -l); do
+			[ "$(realpath $1)" == "$(realpath $d)" ] && pushd +$dirs_i >/dev/null 2>&1 && dirs_i=-1 && break
+			let dirs_i=$dirs_i+1
+		done
+		[ -1 -ne $dirs_i ] && pushd "$1" >/dev/null 2>&1
+		unset dirs_i
 	fi
 	dirs -v
 }
