@@ -1,7 +1,8 @@
 alias startx='sudo service lightdm start'
 alias ls='ls --color'
-alias cls='clear'
 alias l.='ls -d .*'
+alias ll='ls -l --time-style=long-iso'
+alias cls='clear'
 alias vim='vim -p'
 alias upcs='~/.bin/updatecs.sh'
 alias svn.hist='~/.bin/history_of_file.sh'
@@ -21,12 +22,16 @@ pd () {
 	if [ -z "$1" ]; then
 		popd >/dev/null;
 	else
-		pushd "$1" >/dev/null;
+		if dirs -l | sed '1d' | grep -q " ${PWD}$"; then
+			cd "$1"
+		else
+			pushd "$1" >/dev/null;
+		fi
 	fi
 	dirs -v
 }
 
-function svn() {
+svn() {
 case $1 in
 	st | status )
 		shift 1

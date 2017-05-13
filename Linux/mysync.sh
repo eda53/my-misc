@@ -11,7 +11,7 @@ vimdiff_dir() {
 	from=$1
 	to=$2
 	dry_run=' -n '
-	exclude=' --exclude *.o --exclude *.P --exclude *.q --exclude *.svn* '
+	exclude=' --exclude *.o --exclude *.P --exclude *.q --exclude *.svn* --exclude *.git* '
 
 	for fil in $(eval rsync -av "$dry_run" "$exclude" "$from/" "$to/" | sed '1d;/^$/q' | sed 's/ \+->.\+//'); do
 		filename=`basename $fil`

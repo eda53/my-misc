@@ -6,6 +6,8 @@
 
 #cp_files=$(make -n | grep 'cp ')
 
+[ -x ./r.sh ] && ./r.sh && exit
+
 if [ -f "$1" ]; then
 	fdir=$(dirname $1)
 	#if [ -d "$fdir/build" ]; then
