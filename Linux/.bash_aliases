@@ -25,7 +25,7 @@ pd () {
 		[ ! -d "$1" ] && return -1
 		dirs_i=0
 		for d in $(command dirs -l); do
-			[ "$(realpath $1)" == "$(realpath $d)" ] && pushd +$dirs_i >/dev/null 2>&1 && dirs_i=-1 && break
+			[ "$(readlink -f $1)" == "$(readlink -f $d)" ] && pushd +$dirs_i >/dev/null 2>&1 && dirs_i=-1 && break
 			let dirs_i=$dirs_i+1
 		done
 		[ -1 -ne $dirs_i ] && pushd "$1" >/dev/null 2>&1
@@ -42,7 +42,7 @@ case $1 in
 		;;
 	patch )
 		shift 1
-		command svn status "$@" | grep -v '?' | sed 's/.* //' | sort | while read A; do command svn diff --diff-cmd diff "$A"; done
+		command svn status "$@" | grep -v '?' | sed 's/.* //' | sort | while read A; do [ -d "$A" ] || command svn diff --diff-cmd diff "$A"; done
 		;;
 	* )
 		command svn "$@"
