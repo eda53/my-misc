@@ -6,6 +6,7 @@
 --max-instatement-indent=40
 --align-pointer=name
 --align-reference=name
+--keep-one-line-blocks
 --keep-one-line-statements
 --max-code-length=179
 --pad-method-colon=none

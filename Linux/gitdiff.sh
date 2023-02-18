@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Configure your favorite diff program here.
 DIFF="/usr/bin/vimdiff"
@@ -6,11 +6,11 @@ DIFF="/usr/bin/vimdiff"
 
 # Subversion provides the paths we need as the sixth and seventh
 # parameters.
-LEFT=${6}
-RIGHT=${7}
+LEFT=${1}
+RIGHT=${2}
 EXT="${RIGHT##*.}" 
 if [ "$RIGHT" = "$EXT" ]; then
-	FILE="$([ -s $RIGHT ] && file $RIGHT || file $LEFT)"
+	FILE="$(file $RIGHT)"
 	if echo "$FILE" | grep -i 'Squashfs'; then
 		EXT='sqsh'
 	elif echo "$FILE" | grep -i 'gzip'; then

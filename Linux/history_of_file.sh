@@ -7,7 +7,7 @@
 # full text since there's not previous version to compare it to.
 
 function history_of_file() {
-    sed -i.bak 's/^diff-cmd/#diff-cmd/' ~/.subversion/config
+    #sed -i.bak 's/^diff-cmd/#diff-cmd/' ~/.subversion/config
 
     url=$1 # current url of file
     svn log -q $url | grep -E -e "^r[[:digit:]]+" -o | cut -c2- | sort -n | {
@@ -24,12 +24,12 @@ function history_of_file() {
         do
             echo
             svn log -r$r $url@HEAD
-            svn diff -c$r $url@HEAD
+            svn diff --diff-cmd=diff -c$r $url@HEAD
             echo
         done
     }
 
-    mv -f ~/.subversion/config.bak ~/.subversion/config
+    #mv -f ~/.subversion/config.bak ~/.subversion/config
 }
 
 history_of_file $1

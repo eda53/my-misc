@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 #make vsyssrv_clean > /dev/null 2>&1
 
@@ -6,17 +6,10 @@
 
 #cp_files=$(make -n | grep 'cp ')
 
-[ -x ./r.sh ] && ./r.sh && exit
+[ -x ./r.sh ] && ./r.sh "$@" && exit
 
 if [ -f "$1" ]; then
 	fdir=$(dirname $1)
-	#if [ -d "$fdir/build" ]; then
-		#bdir="$fdir/build"
-	#elif [ -d "$fdir/../build" ]; then
-		#bdir="$fdir/../build"
-	#else
-		#bdir="$fdir"
-	#fi
 
 	if [ -f "$fdir/Makefile" -o -f "$fdir/makefile" ]; then
 		bdir="$fdir"
@@ -25,7 +18,9 @@ if [ -f "$1" ]; then
 	elif [ -f "$fdir/../build/Makefile" -o -f "$fdir/../build/makefile" ]; then
 		bdir="$fdir/../build"
 	else
-		if [ -d "$fdir/build" ]; then
+		if [ -f ./Makefile -o -f ./makefile ]; then
+			bdir='.'
+		elif [ -d "$fdir/build" ]; then
 			bdir="$fdir/build"
 		elif [ -d "$fdir/../build" ]; then
 			bdir="$fdir/../build"
@@ -33,7 +28,7 @@ if [ -f "$1" ]; then
 			bdir="$fdir"
 		fi
 	fi
-	make  V=1 -C $bdir debug || make  V=1 -C $bdir
+	make V=1 -C $bdir debug || make V=1 -C $bdir
 else
 	make V=1 $*
 fi

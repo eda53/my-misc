@@ -20,7 +20,7 @@ my_exec_sh() {
 	set -
 }
 
-if [ -f "$1" ]; then
+if [ -f "$1" ] && file "$1" | grep -q 'shell script'; then
 	my_exec_sh "$@"
 else
 	my_exec_cmd "$@"

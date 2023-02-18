@@ -1,2 +1,2 @@
-set makeprg=~/.bin/vim-compile.sh
+set makeprg=~/bin/vim-compile.sh
 

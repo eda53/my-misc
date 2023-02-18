@@ -11,15 +11,27 @@ vimdiff_dir() {
 	from=$1
 	to=$2
 	dry_run=' -n '
-	exclude=' --exclude *.o --exclude *.P --exclude *.q --exclude *.svn* --exclude *.git* '
+	exclude=''
+   	exclude='--exclude *.o '$exclude
+	exclude='--exclude *.P '$exclude
+	exclude='--exclude *.q '$exclude
+	exclude='--exclude *.svn* '$exclude
+	exclude='--exclude *.git* '$exclude
 
 	for fil in $(eval rsync -av "$dry_run" "$exclude" "$from/" "$to/" | sed '1d;/^$/q' | sed 's/ \+->.\+//'); do
 		filename=`basename $fil`
 		fileext=${filename##*.}
-#		[ -f "${from}/${fil}" -a -f "${to}/${fil}" ] && (file "${from}/${fil}" | grep -q "ELF" || vimdiff ${from}/${fil} ${to}/${fil})
-		[ -f "${from}/${fil}" -a ! -h "${from}/${fil}" -a -f "${to}/${fil}" ] && [ "$fileext" != "jpg" -a "$fileext" != "png" -a "$fileext" != "P" ] &&  (file "${from}/${fil}" | grep -q "ELF" || diff -q ${from}/${fil} ${to}/${fil} || vimdiff ${from}/${fil} ${to}/${fil})
-		[ ! -d "${from}/${fil}" -a ! -f "${from}/${fil}" ] && echo "${from}/${fil}   MISSED!"
-		[ ! -d "${to}/${fil}"   -a ! -f "${to}/${fil}" ] && echo "${to}/${fil}   MISSED!"
+
+		[ ! -d "${from}/${fil}" -a ! -f "${from}/${fil}" ] && \
+			{ echo "${from}/${fil}   MISSED!"; continue; }
+		[ ! -d "${to}/${fil}"   -a ! -f "${to}/${fil}"   ] && \
+			{ echo "${to}/${fil}   MISSED!"; continue;   }
+
+		[ -f "${from}/${fil}" -a ! -h "${from}/${fil}" -a -f "${to}/${fil}" ] && \
+			[ "$fileext" != "jpg" -a "$fileext" != "png" -a "$fileext" != "P" ] && \
+		   	(file "${from}/${fil}" | grep -q "ELF"   || \
+			 diff -q "${from}/${fil}" "${to}/${fil}" || \
+			 vimdiff "${from}/${fil}" "${to}/${fil}")
 	done
 }
 

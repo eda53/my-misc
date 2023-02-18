@@ -3,11 +3,14 @@
 # disable globbing, i.e. wild expansion (*)
 set -f
 
+chmod a+w files.cs.txt
 rm -rf files.cs.txt.* cscope.out* tags
 
 FF=" ( -name *.h "
+FF+="-o -name *.hh  "
 FF+="-o -name *.hpp "
 FF+="-o -name *.inl "
+FF+="-o -name *.inc "
 FF+="-o -name *.hrh "
 
 FF+="-o -name *.cpp "
@@ -15,23 +18,33 @@ FF+="-o -name *.cc  "
 FF+="-o -name *.c   "
 FF+="-o -name *.S   "
 
+FF+="-o -name *.go  "
+
 FF+="-o -name *.java "
 FF+="-o -name *.xml "
 FF+="-o -name *.pl  "
 FF+="-o -name *.py  "
+FF+="-o -name *.sh  "
 FF+="-o -name *.vhd "
+FF+="-o -name *.tcl "
 
 FF+="-o -name *.php "
 FF+="-o -name *.js  "
 
 FF+="-o -name [Mm]akefile* "
 FF+="-o -name *.mk "
+FF+="-o -name *.mak "
 FF+=" ) "
+
 
 searchDir() {
 	if [ -n "$1" ]; then
 		echo "Collecting [$(readlink -f $1)] ..."
-		find "$(readlink -f $1)" -not -iwholename '*.svn*' -not -iwholename '*.bak/*' $FF -type f -exec readlink -f {} \; >> files.cs.txt.1
+		find "$(readlink -f $1)"       \
+			-not -iwholename '*.svn*'  \
+			-not -iwholename '*.bak/*' \
+			-not -iwholename '*/rootfs*/*'  \
+			$FF -type f -exec readlink -f {} \; >> files.cs.txt.1
 	fi
 }
 
@@ -55,6 +68,7 @@ cscope -kb -i files.cs.txt.2 || rm files.cs.txt
 ctags -L files.cs.txt --c++-kinds=+p --fields=+iaS --extra=+q
 
 rm -rf files.cs.txt.1 files.cs.txt.2 files.cs.txt.3
+chmod a-w files.cs.txt
 
 
 gen_cpp_tag_v1 () {
